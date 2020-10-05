@@ -1,0 +1,4 @@
+---
+  - name: Initialize public keyring
+    become: yes
+    shell: pacman-key --init
