@@ -40,11 +40,17 @@
       - unzip
       - lib32-ncurses
       - lib32-zlib
+
+  - name: Check q exists 
+    command: ls /opt/q/
+    register: q_dir
+    changed_when: false
   
   - name: Download q
     get_url:
       url: https://kx.com/347_d0szre-fr8917_llrsT4Yle-5839sdX/3.6/linuxx86.zip
       dest: /tmp
+    when: "q_dir.stdout.find('l32') == -1"
     
   - name: Extract q
     become: yes
@@ -52,6 +58,7 @@
       src: /tmp/linuxx86.zip
       dest: /opt
       remote_src: yes
+    when: "q_dir.stdout.find('l32') == -1"
 
   - name: Add q alias in bash_profile
     blockinfile:
@@ -73,17 +80,24 @@
   #   with_items:
   #     - python
 
+  - name: Check miniconda exists 
+    command: ls /opt
+    register: opt_dir
+    changed_when: false
+
   - name: Download minicodna
     get_url:
       url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       dest: /tmp
       checksum: sha256:879457af6a0bf5b34b48c12de31d4df0ee2f06a8e68768e5758c3293b2daf688
+    when: "opt_dir.stdout.find('miniconda') == -1"
 
   - name: Install minicodna
     become: yes
     shell: bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda
     args:
       creates: /opt/miniconda
+    when: "opt_dir.stdout.find('miniconda') == -1"
 
   - name: Add minicinda to path
     blockinfile:
@@ -94,5 +108,5 @@
         export PATH=${PATH}:${CONDA_HOME}/bin/
 
   - name: Initialize minicodna
-    shell: source activate; conda init
+    shell: source /opt/miniconda/bin/activate; conda init
 
