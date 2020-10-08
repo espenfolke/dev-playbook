@@ -1,4 +1,98 @@
 ---
-  - name: Initialize public keyring
+  - name: Replace Siglevel
     become: yes
-    shell: pacman-key --init
+    replace:
+      path: /etc/pacman.conf
+      regexp: "Required DatabaseOptional"
+      replace: "Never"
+
+  - name: Multilib
+    become: yes
+    blockinfile:
+      path: /etc/pacman.conf
+      marker: "# {mark} MULTILIB [ANSIBLE MANAGED BLOCK]"
+      block: |
+        [multilib]
+        Include = /etc/pacman.d/mirrorlist
+  
+  ## Q ##
+  - name: Install general packages
+    become: yes
+    package:
+      force: yes
+      update_cache: yes
+      state: present
+      name: "{{ item }}"
+    with_items:
+      - sshpass
+      - vim
+  
+  ## Q ##
+  - name: Install q dependancies
+    become: yes
+    package:
+      force: yes
+      update_cache: yes
+      state: present
+      name: "{{ item }}"
+    with_items:
+      - rlwrap
+      - unzip
+      - lib32-ncurses
+      - lib32-zlib
+  
+  - name: Download q
+    get_url:
+      url: https://kx.com/347_d0szre-fr8917_llrsT4Yle-5839sdX/3.6/linuxx86.zip
+      dest: /tmp
+    
+  - name: Extract q
+    become: yes
+    unarchive:
+      src: /tmp/linuxx86.zip
+      dest: /opt
+      remote_src: yes
+
+  - name: Add q alias in bash_profile
+    blockinfile:
+      path: /home/vagrant/.bash_profile
+      marker: "# {mark} Q [ANSIBLE MANAGED BLOCK]"
+      block: |
+        export QHOME=/opt/q
+        export PATH=${PATH}:${QHOME}/l32/
+        alias q="rlwrap ${QHOME}/l32/q"
+
+  ## Python ##
+  # - name: Install packages
+  #   become: yes
+  #   package:
+  #     force: yes
+  #     update_cache: yes
+  #     state: present
+  #     name: "{{ item }}"
+  #   with_items:
+  #     - python
+
+  - name: Download minicodna
+    get_url:
+      url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+      dest: /tmp
+      checksum: sha256:879457af6a0bf5b34b48c12de31d4df0ee2f06a8e68768e5758c3293b2daf688
+
+  - name: Install minicodna
+    become: yes
+    shell: bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda
+    args:
+      creates: /opt/miniconda
+
+  - name: Add minicinda to path
+    blockinfile:
+      path: /home/vagrant/.bash_profile
+      marker: "# {mark} MINICONDA [ANSIBLE MANAGED BLOCK]"
+      block: |
+        export CONDA_HOME=/opt/miniconda
+        export PATH=${PATH}:${CONDA_HOME}/bin/
+
+  - name: Initialize minicodna
+    shell: source activate; conda init
+
