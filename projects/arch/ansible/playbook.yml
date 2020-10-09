@@ -3,13 +3,10 @@
   become: yes
 
   roles:
-    - kewlfft.aur
-    - role: robertdebock.bootstrap
-    - role: robertdebock.core_dependencies
-    - role: robertdebock.epel
-    - role: robertdebock.buildtools
-    - role: robertdebock.python_pip
-    - role: robertdebock.anaconda
+    - andrewrothstein.anaconda
+    - role: andrewrothstein.conda-env
+      conda_env_name: python3
+      conda_env_environment: python3.yml
 
   vars_files:
     - default.config.yml
