@@ -1,0 +1,18 @@
+---
+  - name: Ensure Ansible downloads directory exists.
+    file:
+      path: "{{ downloads }}"
+      state: directory
+
+  - name: Ensure /etc/ansible directory exists.
+    become: yes
+    file:
+      path: /etc/ansible
+      state: directory
+
+  - name: Symlink /usr/local/etc/ansible to /etc/ansible.
+    become: yes
+    file:
+      src: /etc/ansible
+      path: /usr/local/etc/ansible
+      state: link

@@ -1,0 +1,34 @@
+---
+  # - name: Replace Siglevel
+  #   become: yes
+  #   replace:
+  #     path: /etc/pacman.conf
+  #     regexp: "Required DatabaseOptional"
+  #     replace: "Never"
+
+  # - name: Multilib
+  #   become: yes
+  #   blockinfile:
+  #     path: /etc/pacman.conf
+  #     marker: "# {mark} MULTILIB [ANSIBLE MANAGED BLOCK]"
+  #     block: |
+  #       [multilib]
+  #       Include = /etc/pacman.d/mirrorlist
+  
+  - name: Install general packages
+    become: yes
+    package:
+      state: present
+      name: "{{ item }}"
+    with_items:
+      - vim
+      - nmap
+
+  - name: Install q dependancies - CentOS
+    become: yes
+    package:
+      state: present
+      name: "{{ item }}"
+    with_items:
+      - net-tools
+    when: ansible_facts['distribution'] == "CentOS"

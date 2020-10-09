@@ -1,0 +1,19 @@
+---
+- hosts: all
+  # connection: local
+  # roles:
+  
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/config.yml"
+      tags: ['always']
+
+  tasks:
+    - include_tasks: tasks/ansible-setup.yml
+    - include_tasks: tasks/extra-packages.yml
+    - include_tasks: tasks/conda.yml
+    - include_tasks: tasks/q.yml
