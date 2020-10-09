@@ -49,11 +49,10 @@
   - name: Setup jupyter server config
     replace:
       path: /home/vagrant/.jupyter/jupyter_notebook_config.py
-      regexp: "# c.NotebookApp.allow_origin = ''"
-      replace: "c.NotebookApp.allow_origin = '*'"
+      regexp: '{{ item.regexp }}'
+      replace: '{{ item.replace }}'
+    with_items:
+      - {regexp: "# c.NotebookApp.allow_origin = ''", replace: "c.NotebookApp.allow_origin = '*'"}
+      - {regexp: "# c.NotebookApp.ip = 'localhost'", replace: "c.NotebookApp.ip = '192.168.60.100'"}
+      - {regexp: "# c.NotebookApp.notebook_dir = ''", replace: "c.NotebookApp.notebook_dir = '/projects'"}
   
-  - name: Setup jupyter server config
-    replace:
-      path: /home/vagrant/.jupyter/jupyter_notebook_config.py
-      regexp: "# c.NotebookApp.ip = 'localhost'"
-      replace: "c.NotebookApp.ip = '192.168.60.100'"

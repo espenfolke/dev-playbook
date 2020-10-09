@@ -22,7 +22,13 @@
       name: "{{ item }}"
     with_items:
       - vim
-      - nmap
+      - perl
+      - gcc
+      - dkms 
+      - kernel-devel
+      - kernel-headers
+      - make
+      - bzip2
 
   - name: Install q dependancies - CentOS
     become: yes
