@@ -1,0 +1,43 @@
+
+---
+  ## Q ##
+  - name: Install q dependancies
+    become: yes
+    package:
+      force: yes
+      update_cache: yes
+      state: present
+      name: "{{ item }}"
+    with_items:
+      - rlwrap
+      - unzip
+      - lib32-ncurses
+      - lib32-zlib
+
+  - name: Check q exists 
+    command: ls /opt
+    register: opt_dir
+    changed_when: false
+  
+  - name: Download q
+    get_url:
+      url: https://kx.com/347_d0szre-fr8917_llrsT4Yle-5839sdX/3.6/linuxx86.zip
+      dest: /tmp
+    when: "opt_dir.stdout.find('q') == -1"
+    
+  - name: Extract q
+    become: yes
+    unarchive:
+      src: /tmp/linuxx86.zip
+      dest: /opt
+      remote_src: yes
+    when: "opt_dir.stdout.find('q') == -1"
+
+  - name: Add q alias in bashrc
+    blockinfile:
+      path: /home/vagrant/.bashrc
+      marker: "# {mark} Q [ANSIBLE MANAGED BLOCK]"
+      block: |
+        export QHOME=/opt/q
+        export PATH=${PATH}:${QHOME}/l32/
+        alias q="rlwrap ${QHOME}/l32/q"

@@ -1,9 +1,15 @@
 ---
 - hosts: all
-  # connection: local
+  become: yes
+
   roles:
     - kewlfft.aur
-    - evandam.conda
+    - role: robertdebock.bootstrap
+    - role: robertdebock.core_dependencies
+    - role: robertdebock.epel
+    - role: robertdebock.buildtools
+    - role: robertdebock.python_pip
+    - role: robertdebock.anaconda
 
   vars_files:
     - default.config.yml
@@ -17,4 +23,8 @@
   tasks:
     - include_tasks: tasks/ansible-setup.yml
     - include_tasks: tasks/extra-packages.yml
-    - include_tasks: tasks/conda.yml
+    # - include_tasks: tasks/conda.yml
+    - include_tasks: tasks/q.yml
+    
+    - name: check if connection still works
+      ping:

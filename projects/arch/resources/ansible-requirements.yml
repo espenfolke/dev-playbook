@@ -1,3 +1,9 @@
 # from galaxy
-- src: evandam.conda
+- src: robertdebock.anaconda
+- src: robertdebock.bootstrap
+- src: robertdebock.core_dependencies
+- src: robertdebock.epel
+- src: robertdebock.buildtools
+- src: robertdebock.python_pip
+- src: robertdebock.service
 - src: kewlfft.aur

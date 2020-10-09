@@ -1,29 +1,32 @@
 ---
-  - name: Update conda
-    conda:
-      name: conda
-      state: latest
-      executable: /opt/conda/bin/conda
+  ## Miniconda ##
+  - name: Check miniconda exists 
+    command: ls /opt
+    register: opt_dir
+    changed_when: false
 
-  - name: Create a conda environment
-    conda:
-      name: python
-      version: 3.8
-      environment: python3
-      state: present
+  - name: Download minicodna
+    get_url:
+      url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+      dest: /tmp
+      checksum: sha256:879457af6a0bf5b34b48c12de31d4df0ee2f06a8e68768e5758c3293b2daf688
+    when: "opt_dir.stdout.find('miniconda') == -1"
 
-  - name: Install some packages in the environment
-    conda:
-      name:
-          - pandas
-          - numpy
-          - tensorflow
-          - scipy
-          - jupyter
-          - scikt-learn
-          - matplotlib
-      environment: python3
+  - name: Install minicodna
+    become: yes
+    shell: bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda
+    args:
+      creates: /opt/miniconda
+    when: "opt_dir.stdout.find('miniconda') == -1"
 
-  # - name: Install R, using a versioned name
-  #   conda:
-  #     name: r-base=3.5.0
+  - name: Add minicinda to path
+    blockinfile:
+      path: /home/vagrant/.bashrc
+      marker: "# {mark} MINICONDA [ANSIBLE MANAGED BLOCK]"
+      block: |
+        export CONDA_HOME=/opt/miniconda
+        export PATH=${PATH}:${CONDA_HOME}/bin/
+    when: "opt_dir.stdout.find('miniconda') == -1"
+
+  - name: Initialize minicodna
+    shell: source /opt/miniconda/bin/activate; conda init;
