@@ -1,20 +1,22 @@
 ---
-  # - name: Replace Siglevel
-  #   become: yes
-  #   replace:
-  #     path: /etc/pacman.conf
-  #     regexp: "Required DatabaseOptional"
-  #     replace: "Never"
+  - name: Replace Siglevel
+    become: yes
+    replace:
+      path: /etc/pacman.conf
+      regexp: "Required DatabaseOptional"
+      replace: "Never"
+    when: ansible_facts['distribution'] == "ArchLinux"
 
-  # - name: Multilib
-  #   become: yes
-  #   blockinfile:
-  #     path: /etc/pacman.conf
-  #     marker: "# {mark} MULTILIB [ANSIBLE MANAGED BLOCK]"
-  #     block: |
-  #       [multilib]
-  #       Include = /etc/pacman.d/mirrorlist
-  
+  - name: Multilib
+    become: yes
+    blockinfile:
+      path: /etc/pacman.conf
+      marker: "# {mark} MULTILIB [ANSIBLE MANAGED BLOCK]"
+      block: |
+        [multilib]
+        Include = /etc/pacman.d/mirrorlist
+    when: ansible_facts['distribution'] == "ArchLinux"
+
   - name: Install general packages
     become: yes
     package:
@@ -24,7 +26,6 @@
       - vim
       - perl
       - gcc
-      - dkms 
       - kernel-devel
       - kernel-headers
       - make

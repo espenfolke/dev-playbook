@@ -53,6 +53,6 @@
       replace: '{{ item.replace }}'
     with_items:
       - {regexp: "# c.NotebookApp.allow_origin = ''", replace: "c.NotebookApp.allow_origin = '*'"}
-      - {regexp: "# c.NotebookApp.ip = 'localhost'", replace: "c.NotebookApp.ip = '192.168.60.100'"}
+      - {regexp: "^# c.NotebookApp.ip = '.*'", replace: "c.NotebookApp.ip = '{{ ansible_all_ipv4_addresses[1] }}'"}
       - {regexp: "# c.NotebookApp.notebook_dir = ''", replace: "c.NotebookApp.notebook_dir = '/projects'"}
   
