@@ -59,9 +59,9 @@
       remote_src: yes
     when: "opt_dir.stdout.find('q') == -1"
 
-  - name: Add q alias in bash_profile
+  - name: Add q alias in bashrc
     blockinfile:
-      path: /home/vagrant/.bash_profile
+      path: /home/vagrant/.bashrc
       marker: "# {mark} Q [ANSIBLE MANAGED BLOCK]"
       block: |
         export QHOME=/opt/q
@@ -91,7 +91,7 @@
 
   - name: Add minicinda to path
     blockinfile:
-      path: /home/vagrant/.bash_profile
+      path: /home/vagrant/.bashrc
       marker: "# {mark} MINICONDA [ANSIBLE MANAGED BLOCK]"
       block: |
         export CONDA_HOME=/opt/miniconda
@@ -102,6 +102,7 @@
 
 
   ## Miniconda Packages ##
-  - name: Initialize minicodna
-    shell: source /opt/miniconda/bin/activate; conda install -c anaconda numpy -y -q
-    # shell: source /opt/miniconda/bin/activate; conda install -c anaconda scikit-learn numpy pandas jupyter -y -q
+  # - name: Initialize minicodna
+  #   shell: source /opt/miniconda/bin/activate; 
+  # conda install -c anaconda scikit-learn numpy pandas jupyter -y -q
+  # conda install -c conda-forge matplotlib -y -q
