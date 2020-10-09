@@ -24,7 +24,6 @@
       state: present
       name: "{{ item }}"
     with_items:
-      - sshpass
       - vim
   
   ## Q ##
@@ -42,15 +41,15 @@
       - lib32-zlib
 
   - name: Check q exists 
-    command: ls /opt/q/
-    register: q_dir
+    command: ls /opt
+    register: opt_dir
     changed_when: false
   
   - name: Download q
     get_url:
       url: https://kx.com/347_d0szre-fr8917_llrsT4Yle-5839sdX/3.6/linuxx86.zip
       dest: /tmp
-    when: "q_dir.stdout.find('l32') == -1"
+    when: "opt_dir.stdout.find('q') == -1"
     
   - name: Extract q
     become: yes
@@ -58,7 +57,7 @@
       src: /tmp/linuxx86.zip
       dest: /opt
       remote_src: yes
-    when: "q_dir.stdout.find('l32') == -1"
+    when: "opt_dir.stdout.find('q') == -1"
 
   - name: Add q alias in bash_profile
     blockinfile:
@@ -69,16 +68,7 @@
         export PATH=${PATH}:${QHOME}/l32/
         alias q="rlwrap ${QHOME}/l32/q"
 
-  ## Python ##
-  # - name: Install packages
-  #   become: yes
-  #   package:
-  #     force: yes
-  #     update_cache: yes
-  #     state: present
-  #     name: "{{ item }}"
-  #   with_items:
-  #     - python
+  ## Miniconda ##
 
   - name: Check miniconda exists 
     command: ls /opt
@@ -110,3 +100,8 @@
   - name: Initialize minicodna
     shell: source /opt/miniconda/bin/activate; conda init
 
+
+  ## Miniconda Packages ##
+  - name: Initialize minicodna
+    shell: source /opt/miniconda/bin/activate; conda install -c anaconda numpy -y -q
+    # shell: source /opt/miniconda/bin/activate; conda install -c anaconda scikit-learn numpy pandas jupyter -y -q
