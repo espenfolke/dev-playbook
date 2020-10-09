@@ -1,9 +1,26 @@
 ---
 - hosts: all
   # connection: local
-  # roles:
-  # - kewlfft.aur
-  
+  roles:
+    - kewlfft.aur
+    - role: uchida.miniconda
+      become: yes
+      miniconda_python: 3
+      miniconda_prefix: /opt/miniconda
+      miniconda_env:
+        name: vagrant
+        channels:
+          - conda-forge
+          - anaconda
+        dependencies:
+          - python=3.8
+          - numpy
+          - scipy
+          - matplotlib
+          - scikit-learn
+          - pandas
+          - jupyter
+
   vars_files:
     - default.config.yml
 
